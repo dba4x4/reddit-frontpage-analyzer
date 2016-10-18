@@ -17,6 +17,11 @@ TODO
 - [X] Fetch reddit frontpage
 - [X] Save unique posts to PostgreSQL
 - [X] Tag images with [Microsoft Computer Vision API][3]
+- [] Add tests
+- [] Add Travis CI support
+- [] Add code coverage and other badges
+- [] Add instructions for running in README
+- [] Gracefully exit current run when hitting rate limits
 
 [1]: https://reddit.com/r/all
 [2]: https://github.com/swordbeta/reddit-frontpage-analyzer-nodejs
