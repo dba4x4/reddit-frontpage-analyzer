@@ -1,0 +1,9 @@
+postgresql:
+    database: postgres
+    username: swordbeta
+    password: 
+    hostname: 
+    port: 5432
+microsoft:
+    key: 
+debug: false
