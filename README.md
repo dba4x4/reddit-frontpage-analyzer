@@ -10,14 +10,27 @@ For the NodeJS serverless version see [here][2].
 
 ### Installation / Running
 
-TODO
+Clone the repository
+```
+λ git clone git@github.com:swordbeta/reddit-frontpage-analyzer-go.git && cd reddit-frontpage-analyzer-go
+```
+
+Build docker image
+```
+λ docker build -t reddit-frontpage-analyzer-go .
+```
+
+Run docker container
+```
+λ docker run --rm --name reddit-frontpage-analyzer-go reddit-frontpage-analyzer-go
+```
 
 ### Roadmap
 
 - [X] Fetch reddit frontpage
 - [X] Save unique posts to PostgreSQL
 - [X] Tag images with [Microsoft Computer Vision API][3]
-- [ ] Add instructions for running in README
+- [X] Add instructions for running in README
 - [ ] Gracefully exit current run when hitting rate limits
 - [ ] Add tests
 - [ ] Add Travis CI support
