@@ -2,6 +2,7 @@
 [![Travis](https://travis-ci.org/swordbeta/reddit-frontpage-analyzer-go.svg?branch=master)](https://travis-ci.org/swordbeta/reddit-frontpage-analyzer-go)
 [![Go Report Card](https://goreportcard.com/badge/github.com/swordbeta/reddit-frontpage-analyzer-go)](https://goreportcard.com/report/github.com/swordbeta/reddit-frontpage-analyzer-go)
 [![codecov](https://codecov.io/gh/swordbeta/reddit-frontpage-analyzer-go/branch/master/graph/badge.svg)](https://codecov.io/gh/swordbeta/reddit-frontpage-analyzer-go)
+[![codebeat badge](https://codebeat.co/badges/e587155a-c69e-406a-a1b5-c219513b2400)](https://codebeat.co/projects/github-com-swordbeta-reddit-frontpage-analyzer-go)
 
 This go application does the following:
 
