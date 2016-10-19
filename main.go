@@ -6,6 +6,7 @@ import (
 	"log"
 	"sync"
 
+	vision "github.com/ahmdrz/microsoft-vision-golang"
 	"github.com/jasonlvhit/gocron"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
@@ -37,10 +38,14 @@ func run() {
 		}
 		log.Fatalln(err)
 	}
+	vision, err := vision.New(viper.GetString("microsoft.key"))
+	if err != nil {
+		log.Fatalln(err)
+	}
 	var wg sync.WaitGroup
 	for _, post := range posts {
 		wg.Add(1)
-		go processPost(post, db, &wg)
+		go processPost(post, db, vision, &wg)
 	}
 	wg.Wait()
 	log.Println("Finished processing all posts, waiting 30 minutes...")
@@ -75,7 +80,7 @@ func initDatabase() *gorm.DB {
 	return db
 }
 
-func processPost(post *Post, db *gorm.DB, wg *sync.WaitGroup) {
+func processPost(post *Post, db *gorm.DB, vision *vision.Vision, wg *sync.WaitGroup) {
 	defer wg.Done()
 	if alreadySaved(post.ID, db) {
 		log.Println("Skipping #", post.ID, "...")
@@ -83,7 +88,7 @@ func processPost(post *Post, db *gorm.DB, wg *sync.WaitGroup) {
 	}
 	log.Println("Started processing #", post.ID, "...")
 	if post.PostHint == "image" {
-		post.Tags = tagImg(post.URL)
+		post.Tags = tagImg(post.URL, vision)
 	}
 	savePost(post, db)
 	log.Println("Finished processing #", post.ID, "...")

@@ -28,3 +28,7 @@ type Tag struct {
 	PostID string
 	vision.Tag
 }
+
+type Tagger interface {
+	Tag(url string) (vision.VisionResult, error)
+}

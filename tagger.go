@@ -3,16 +3,9 @@ package main
 import (
 	"fmt"
 	"log"
-
-	vision "github.com/ahmdrz/microsoft-vision-golang"
-	"github.com/spf13/viper"
 )
 
-func tagImg(url string) []Tag {
-	vision, err := vision.New(viper.GetString("microsoft.key"))
-	if err != nil {
-		log.Fatalln(err)
-	}
+func tagImg(url string, vision Tagger) []Tag {
 	result, err := vision.Tag(url)
 	if err != nil {
 		log.Println(fmt.Sprintf("While trying to tag %s got the following error: %s", url, err))
