@@ -88,7 +88,7 @@ func Test_tagImg(t *testing.T) {
 			},
 		},
 		{
-			"Unkonwn image",
+			"Unknown image",
 			args{
 				"http://test.com/unknown.jpg",
 				MockedVision{},

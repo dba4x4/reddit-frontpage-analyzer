@@ -1,4 +1,6 @@
 # Reddit Frontpage Analyzer (go)
+[![Travis](https://travis-ci.org/swordbeta/reddit-frontpage-analyzer-go.svg?branch=master)](https://travis-ci.org/swordbeta/reddit-frontpage-analyzer-go)
+[![Go Report Card](https://goreportcard.com/badge/github.com/swordbeta/reddit-frontpage-analyzer-go)](https://goreportcard.com/report/github.com/swordbeta/reddit-frontpage-analyzer-go)
 
 This go application does the following:
 
