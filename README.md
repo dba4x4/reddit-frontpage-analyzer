@@ -15,6 +15,11 @@ Clone the repository
 λ git clone git@github.com:swordbeta/reddit-frontpage-analyzer-go.git && cd reddit-frontpage-analyzer-go
 ```
 
+Copy the config file and edit
+```
+cp config.yaml.default config.yaml && vim config.yaml
+```
+
 Build docker image
 ```
 λ docker build -t reddit-frontpage-analyzer-go .
@@ -31,7 +36,7 @@ Run docker container
 - [X] Save unique posts to PostgreSQL
 - [X] Tag images with [Microsoft Computer Vision API][3]
 - [X] Add instructions for running in README
-- [ ] Gracefully exit current run when hitting rate limits
+- [X] Gracefully exit current run when hitting rate limits
 - [ ] Add tests
 - [ ] Add Travis CI support
 - [ ] Add code coverage and other badges

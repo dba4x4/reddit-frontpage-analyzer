@@ -15,7 +15,7 @@ import (
 func main() {
 	initConfig()
 	if viper.GetBool("debug") {
-		log.SetFlags(log.LstdFlags | log.Llongfile)
+		log.SetFlags(log.LstdFlags | log.Lshortfile)
 	} else {
 		log.SetOutput(ioutil.Discard)
 	}
@@ -29,7 +29,14 @@ func run() {
 	log.Println("Starting to process all posts on r/all...")
 	db := initDatabase()
 	defer db.Close()
-	posts := getPosts("all")
+	posts, err := getPosts("all")
+	if err != nil {
+		if err.Error() == "Too many requests" {
+			log.Println("Hit reddit late limitting, waiting till next batch...")
+			return
+		}
+		log.Fatalln(err)
+	}
 	var wg sync.WaitGroup
 	for _, post := range posts {
 		wg.Add(1)
