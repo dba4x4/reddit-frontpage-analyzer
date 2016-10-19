@@ -8,7 +8,7 @@ go:
 
 before_script:
     - go get -t -v ./...
-    - psql -c 'create database reddit-frontpage-analyzer-go;' -U postgres
+    - psql -c 'create database rfag;' -U postgres
     - cp config.yaml.travis config.yaml
 
 script:

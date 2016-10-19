@@ -1,5 +1,5 @@
 postgresql:
-    database: reddit-frontpage-analyzer-go
+    database: rfag
     username: postgres
     password: 
     hostname: localhost
