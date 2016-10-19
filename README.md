@@ -1,6 +1,7 @@
 # Reddit Frontpage Analyzer (go)
 [![Travis](https://travis-ci.org/swordbeta/reddit-frontpage-analyzer-go.svg?branch=master)](https://travis-ci.org/swordbeta/reddit-frontpage-analyzer-go)
 [![Go Report Card](https://goreportcard.com/badge/github.com/swordbeta/reddit-frontpage-analyzer-go)](https://goreportcard.com/report/github.com/swordbeta/reddit-frontpage-analyzer-go)
+[![codecov](https://codecov.io/gh/swordbeta/reddit-frontpage-analyzer-go/branch/master/graph/badge.svg)](https://codecov.io/gh/swordbeta/reddit-frontpage-analyzer-go)
 
 This go application does the following:
 
@@ -40,8 +41,8 @@ Run docker container
 - [X] Add instructions for running in README
 - [X] Gracefully exit current run when hitting rate limits
 - [ ] Add tests
-- [ ] Add Travis CI support
-- [ ] Add code coverage and other badges
+- [X] Add Travis CI support
+- [X] Add code coverage and other badges
 
 [1]: https://reddit.com/r/all
 [2]: https://github.com/swordbeta/reddit-frontpage-analyzer-nodejs

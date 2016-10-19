@@ -51,8 +51,23 @@ func run() {
 	log.Println("Finished processing all posts, waiting 30 minutes...")
 }
 
+func processPost(post *post, db *gorm.DB, vision *vision.Vision, wg *sync.WaitGroup) {
+	defer wg.Done()
+	if alreadySaved(post.ID, db) {
+		log.Println("Skipping #", post.ID, "...")
+		return
+	}
+	log.Println("Started processing #", post.ID, "...")
+	if post.PostHint == "image" {
+		post.Tags = tagImg(post.URL, vision)
+	}
+	savePost(post, db)
+	log.Println("Finished processing #", post.ID, "...")
+}
+
 func initConfig() {
 	viper.AddConfigPath(".")
+	viper.AddConfigPath("../")
 	viper.AddConfigPath("$HOME/.config/reddit-frontpage-analyzer/")
 	viper.SetConfigName("config")
 	err := viper.ReadInConfig()
@@ -76,20 +91,6 @@ func initDatabase() *gorm.DB {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	db.AutoMigrate(&Post{}, &Tag{})
+	db.AutoMigrate(&post{}, &tag{})
 	return db
-}
-
-func processPost(post *Post, db *gorm.DB, vision *vision.Vision, wg *sync.WaitGroup) {
-	defer wg.Done()
-	if alreadySaved(post.ID, db) {
-		log.Println("Skipping #", post.ID, "...")
-		return
-	}
-	log.Println("Started processing #", post.ID, "...")
-	if post.PostHint == "image" {
-		post.Tags = tagImg(post.URL, vision)
-	}
-	savePost(post, db)
-	log.Println("Finished processing #", post.ID, "...")
 }

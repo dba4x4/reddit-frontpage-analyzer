@@ -1,7 +1,15 @@
 language: go
 
+services:
+    - postgresql
+
 go:
     - 1.7.3
+
+before_script:
+    - go get -t -v ./...
+    - psql -c 'create database reddit-frontpage-analyzer-go;' -U postgres
+    - cp config.yaml.travis config.yaml
 
 script:
     - go test -race -coverprofile=coverage.txt -covermode=atomic -v ./...

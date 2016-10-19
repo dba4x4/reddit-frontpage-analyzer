@@ -1,11 +1,69 @@
 package main
 
 import (
+	"errors"
 	"reflect"
 	"testing"
 
 	vision "github.com/ahmdrz/microsoft-vision-golang"
+	"github.com/jinzhu/gorm"
 )
+
+func Test_alreadySaved(t *testing.T) {
+	initConfig()
+	db := initDatabase()
+	defer db.Close()
+	savePost(&post{
+		ID: "myExistingPost",
+	}, db)
+	type args struct {
+		id string
+		db *gorm.DB
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			"New post",
+			args{
+				"myNewPost",
+				db,
+			},
+			false,
+		},
+		{
+			"Existing post",
+			args{
+				"myExistingPost",
+				db,
+			},
+			true,
+		},
+	}
+	for _, tt := range tests {
+		if got := alreadySaved(tt.args.id, tt.args.db); got != tt.want {
+			t.Errorf("%q. alreadySaved() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+
+func Test_savePost(t *testing.T) {
+	initConfig()
+	db := initDatabase()
+	defer db.Close()
+	post := &post{
+		ID: "myPost",
+	}
+	if alreadySaved(post.ID, db) {
+		t.Errorf("Test_savePost ID %v already exists.", post.ID)
+	}
+	savePost(post, db)
+	if alreadySaved(post.ID, db) == false {
+		t.Errorf("Test_savePost ID %v was not saved", post.ID)
+	}
+}
 
 const firstImage = "http://test.com/firstimage.jpg"
 const secondImage = "http://test.com/secondImage.jpg"
@@ -38,18 +96,18 @@ func (mV MockedVision) Tag(url string) (vision.VisionResult, error) {
 			},
 		}, nil
 	}
-	return vision.VisionResult{}, nil
+	return vision.VisionResult{}, errors.New("Could not fetch image!")
 }
 
 func Test_tagImg(t *testing.T) {
 	type args struct {
 		url    string
-		vision Tagger
+		vision tagger
 	}
 	tests := []struct {
 		name string
 		args args
-		want []Tag
+		want []tag
 	}{
 		{
 			"Person image",
@@ -57,8 +115,8 @@ func Test_tagImg(t *testing.T) {
 				firstImage,
 				MockedVision{},
 			},
-			[]Tag{
-				Tag{
+			[]tag{
+				tag{
 					Tag: vision.Tag{
 						Name:       "Person",
 						Confidence: 0.95,
@@ -72,14 +130,14 @@ func Test_tagImg(t *testing.T) {
 				secondImage,
 				MockedVision{},
 			},
-			[]Tag{
-				Tag{
+			[]tag{
+				tag{
 					Tag: vision.Tag{
 						Name:       "Dog",
 						Confidence: 0.95,
 					},
 				},
-				Tag{
+				tag{
 					Tag: vision.Tag{
 						Name:       "Grass",
 						Confidence: 0.75,
@@ -93,7 +151,7 @@ func Test_tagImg(t *testing.T) {
 				"http://test.com/unknown.jpg",
 				MockedVision{},
 			},
-			[]Tag{},
+			[]tag{},
 		},
 	}
 	for _, tt := range tests {
