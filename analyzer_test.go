@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"reflect"
+	"sync"
 	"testing"
 
 	vision "github.com/ahmdrz/microsoft-vision-golang"
@@ -72,10 +73,10 @@ func Test_savePost(t *testing.T) {
 const firstImage = "http://test.com/firstimage.jpg"
 const secondImage = "http://test.com/secondImage.jpg"
 
-type MockedVision struct {
+type mockedVision struct {
 }
 
-func (mV MockedVision) Tag(url string) (vision.VisionResult, error) {
+func (mV mockedVision) Tag(url string) (vision.VisionResult, error) {
 	switch url {
 	case firstImage:
 		return vision.VisionResult{
@@ -117,7 +118,7 @@ func Test_tagImg(t *testing.T) {
 			"Person image",
 			args{
 				firstImage,
-				MockedVision{},
+				mockedVision{},
 			},
 			[]tag{
 				tag{
@@ -132,7 +133,7 @@ func Test_tagImg(t *testing.T) {
 			"Dog running on grass image",
 			args{
 				secondImage,
-				MockedVision{},
+				mockedVision{},
 			},
 			[]tag{
 				tag{
@@ -153,7 +154,7 @@ func Test_tagImg(t *testing.T) {
 			"Unknown image",
 			args{
 				"http://test.com/unknown.jpg",
-				MockedVision{},
+				mockedVision{},
 			},
 			[]tag{},
 		},
@@ -196,5 +197,32 @@ func Test_getPostsTooManyRequests(t *testing.T) {
 	}
 	if err != nil && err.Error() != "Too many requests" {
 		t.Errorf("The webserver errored with %s, but should have errored with 'Too many requests'.", err.Error())
+	}
+}
+
+func Test_processPost(t *testing.T) {
+	post := &post{
+		ID: "processPost",
+	}
+	db := initDatabase()
+	defer db.Close()
+	var wg sync.WaitGroup
+	wg.Add(1)
+	if processPost(post, db, &mockedVision{}, &wg) != true {
+		t.Error("Failed to process a new post, it already is processed!")
+	}
+}
+
+func Test_processPostAlreadyProcessed(t *testing.T) {
+	post := &post{
+		ID: "existingPost",
+	}
+	db := initDatabase()
+	defer db.Close()
+	savePost(post, db)
+	var wg sync.WaitGroup
+	wg.Add(1)
+	if processPost(post, db, &mockedVision{}, &wg) != false {
+		t.Error("Failed to process a new post, it already is processed!")
 	}
 }

@@ -55,8 +55,6 @@ type response struct {
 	}
 }
 
-var redditURL = "https://www.reddit.com/r/%s.json"
-
 func main() {
 	initConfig()
 	if viper.GetBool("debug") {
@@ -125,11 +123,11 @@ func initDatabase() *gorm.DB {
 	return db
 }
 
-func processPost(post *post, db *gorm.DB, vision *vision.Vision, wg *sync.WaitGroup) {
+func processPost(post *post, db *gorm.DB, vision tagger, wg *sync.WaitGroup) bool {
 	defer wg.Done()
 	if alreadySaved(post.ID, db) {
 		log.Println("Skipping #", post.ID, "...")
-		return
+		return false
 	}
 	log.Println("Started processing #", post.ID, "...")
 	if post.PostHint == "image" {
@@ -137,7 +135,10 @@ func processPost(post *post, db *gorm.DB, vision *vision.Vision, wg *sync.WaitGr
 	}
 	savePost(post, db)
 	log.Println("Finished processing #", post.ID, "...")
+	return true
 }
+
+var redditURL = "https://www.reddit.com/r/%s.json"
 
 func getPosts(subreddit string) ([]*post, error) {
 	client := &http.Client{}
