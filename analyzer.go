@@ -4,11 +4,16 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"sync"
 
 	vision "github.com/ahmdrz/microsoft-vision-golang"
+	"github.com/jasonlvhit/gocron"
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/spf13/viper"
 )
 
 type post struct {
@@ -50,9 +55,93 @@ type response struct {
 	}
 }
 
+var redditURL = "https://www.reddit.com/r/%s.json"
+
+func main() {
+	initConfig()
+	if viper.GetBool("debug") {
+		log.SetFlags(log.LstdFlags | log.Lshortfile)
+	} else {
+		log.SetOutput(ioutil.Discard)
+	}
+	run()
+	ch := gocron.Start()
+	gocron.Every(30).Minutes().Do(run)
+	<-ch
+}
+
+func run() {
+	log.Println("Starting to process all posts on r/all...")
+	db := initDatabase()
+	defer db.Close()
+	posts, err := getPosts("all")
+	if err != nil {
+		if err.Error() == "Too many requests" {
+			log.Println("Hit reddit late limitting, waiting till next batch...")
+			return
+		}
+		log.Fatalln(err)
+	}
+	vision, err := vision.New(viper.GetString("microsoft.key"))
+	if err != nil {
+		log.Fatalln(err)
+	}
+	var wg sync.WaitGroup
+	for _, post := range posts {
+		wg.Add(1)
+		go processPost(post, db, vision, &wg)
+	}
+	wg.Wait()
+	log.Println("Finished processing all posts, waiting 30 minutes...")
+}
+
+func initConfig() {
+	viper.AddConfigPath(".")
+	viper.AddConfigPath("../")
+	viper.AddConfigPath("$HOME/.config/reddit-frontpage-analyzer/")
+	viper.SetConfigName("config")
+	err := viper.ReadInConfig()
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
+
+func initDatabase() *gorm.DB {
+	db, err := gorm.Open(
+		"postgres",
+		fmt.Sprintf(
+			"host=%s user=%s dbname=%s sslmode=disable password=%s port=%s",
+			viper.GetString("postgresql.hostname"),
+			viper.GetString("postgresql.username"),
+			viper.GetString("postgresql.database"),
+			viper.GetString("postgresql.password"),
+			viper.GetString("postgresql.port"),
+		),
+	)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	db.AutoMigrate(&post{}, &tag{})
+	return db
+}
+
+func processPost(post *post, db *gorm.DB, vision *vision.Vision, wg *sync.WaitGroup) {
+	defer wg.Done()
+	if alreadySaved(post.ID, db) {
+		log.Println("Skipping #", post.ID, "...")
+		return
+	}
+	log.Println("Started processing #", post.ID, "...")
+	if post.PostHint == "image" {
+		post.Tags = tagImg(post.URL, vision)
+	}
+	savePost(post, db)
+	log.Println("Finished processing #", post.ID, "...")
+}
+
 func getPosts(subreddit string) ([]*post, error) {
 	client := &http.Client{}
-	url := fmt.Sprintf("https://www.reddit.com/r/%s.json", subreddit)
+	url := fmt.Sprintf(redditURL, subreddit)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
