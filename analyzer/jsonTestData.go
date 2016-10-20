@@ -1,4 +1,4 @@
-package main
+package analyzer
 
 var jsonTestData = `{
   "kind": "Listing",

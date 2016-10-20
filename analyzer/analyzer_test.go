@@ -1,4 +1,4 @@
-package main
+package analyzer
 
 import (
 	"errors"
@@ -10,65 +10,8 @@ import (
 	"testing"
 
 	vision "github.com/ahmdrz/microsoft-vision-golang"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/swordbeta/reddit-frontpage-analyzer-go/util"
 )
-
-func Test_alreadySaved(t *testing.T) {
-	initConfig()
-	db := initDatabase()
-	defer db.Close()
-	savePost(&post{
-		ID: "myExistingPost",
-	}, db)
-	type args struct {
-		id string
-		db *gorm.DB
-	}
-	tests := []struct {
-		name string
-		args args
-		want bool
-	}{
-		{
-			"New post",
-			args{
-				"myNewPost",
-				db,
-			},
-			false,
-		},
-		{
-			"Existing post",
-			args{
-				"myExistingPost",
-				db,
-			},
-			true,
-		},
-	}
-	for _, tt := range tests {
-		if got := alreadySaved(tt.args.id, tt.args.db); got != tt.want {
-			t.Errorf("%q. alreadySaved() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-
-func Test_savePost(t *testing.T) {
-	initConfig()
-	db := initDatabase()
-	defer db.Close()
-	post := &post{
-		ID: "myPost",
-	}
-	if alreadySaved(post.ID, db) {
-		t.Errorf("Test_savePost ID %v already exists.", post.ID)
-	}
-	savePost(post, db)
-	if alreadySaved(post.ID, db) == false {
-		t.Errorf("Test_savePost ID %v was not saved", post.ID)
-	}
-}
 
 const firstImage = "http://test.com/firstimage.jpg"
 const secondImage = "http://test.com/secondImage.jpg"
@@ -107,12 +50,12 @@ func (mV mockedVision) Tag(url string) (vision.VisionResult, error) {
 func Test_tagImg(t *testing.T) {
 	type args struct {
 		url    string
-		vision tagger
+		vision util.Tagger
 	}
 	tests := []struct {
 		name string
 		args args
-		want []tag
+		want []util.Tag
 	}{
 		{
 			"Person image",
@@ -120,8 +63,8 @@ func Test_tagImg(t *testing.T) {
 				firstImage,
 				mockedVision{},
 			},
-			[]tag{
-				tag{
+			[]util.Tag{
+				util.Tag{
 					Tag: vision.Tag{
 						Name:       "Person",
 						Confidence: 0.95,
@@ -135,14 +78,14 @@ func Test_tagImg(t *testing.T) {
 				secondImage,
 				mockedVision{},
 			},
-			[]tag{
-				tag{
+			[]util.Tag{
+				util.Tag{
 					Tag: vision.Tag{
 						Name:       "Dog",
 						Confidence: 0.95,
 					},
 				},
-				tag{
+				util.Tag{
 					Tag: vision.Tag{
 						Name:       "Grass",
 						Confidence: 0.75,
@@ -156,7 +99,7 @@ func Test_tagImg(t *testing.T) {
 				"http://test.com/unknown.jpg",
 				mockedVision{},
 			},
-			[]tag{},
+			[]util.Tag{},
 		},
 	}
 	for _, tt := range tests {
@@ -201,10 +144,11 @@ func Test_getPostsTooManyRequests(t *testing.T) {
 }
 
 func Test_processPost(t *testing.T) {
-	post := &post{
+	post := &util.Post{
 		ID: "processPost",
 	}
-	db := initDatabase()
+	util.InitConfig()
+	db := util.InitDatabase()
 	defer db.Close()
 	var wg sync.WaitGroup
 	wg.Add(1)
@@ -214,12 +158,13 @@ func Test_processPost(t *testing.T) {
 }
 
 func Test_processPostAlreadyProcessed(t *testing.T) {
-	post := &post{
+	post := &util.Post{
 		ID: "existingPost",
 	}
-	db := initDatabase()
+	util.InitConfig()
+	db := util.InitDatabase()
 	defer db.Close()
-	savePost(post, db)
+	util.SavePost(post, db)
 	var wg sync.WaitGroup
 	wg.Add(1)
 	if processPost(post, db, &mockedVision{}, &wg) != false {
