@@ -41,7 +41,7 @@ Run docker container
 - [X] Tag images with [Microsoft Computer Vision API][3]
 - [X] Add instructions for running in README
 - [X] Gracefully exit current run when hitting rate limits
-- [ ] Add tests
+- [X] Add tests
 - [X] Add Travis CI support
 - [X] Add code coverage and other badges
 
