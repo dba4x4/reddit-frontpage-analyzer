@@ -1,13 +1,15 @@
 build:
   image: golang
+  environment:
+    - CODECOV_TOKEN=$$CODECOV_TOKEN
   commands:
     - go get -t -v ./...
-    - cp config.yaml.travis config.yaml
+    - cp config.yaml.drone config.yaml
     - ./go.test.sh
     - curl -s https://codecov.io/bash > .codecov
     - chmod +x .codecov
     - ./.codecov
-    
+
 compose:
   database:
     image: postgres
