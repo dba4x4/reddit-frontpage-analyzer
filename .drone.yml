@@ -3,7 +3,6 @@ build:
   commands:
     - go get -t -v ./...
     - cp config.yaml.travis config.yaml
-    - psql -c 'create database rfag;' -U postgres
     - ./go.test.sh
     - bash <(curl -s https://codecov.io/bash)
     
