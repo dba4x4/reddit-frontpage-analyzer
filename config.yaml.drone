@@ -1,0 +1,9 @@
+postgresql:
+    database: rfag
+    username: postgres
+    password: 
+    hostname: localhost
+    port: 5432
+microsoft:
+    key: 
+debug: false
