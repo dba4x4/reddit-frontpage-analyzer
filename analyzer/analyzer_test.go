@@ -65,10 +65,8 @@ func Test_tagImg(t *testing.T) {
 			},
 			[]util.Tag{
 				util.Tag{
-					Tag: vision.Tag{
-						Name:       "Person",
-						Confidence: 0.95,
-					},
+					Name:       "Person",
+					Confidence: 0.95,
 				},
 			},
 		},
@@ -80,16 +78,12 @@ func Test_tagImg(t *testing.T) {
 			},
 			[]util.Tag{
 				util.Tag{
-					Tag: vision.Tag{
-						Name:       "Dog",
-						Confidence: 0.95,
-					},
+					Name:       "Dog",
+					Confidence: 0.95,
 				},
 				util.Tag{
-					Tag: vision.Tag{
-						Name:       "Grass",
-						Confidence: 0.75,
-					},
+					Name:       "Grass",
+					Confidence: 0.75,
 				},
 			},
 		},
