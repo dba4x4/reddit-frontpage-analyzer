@@ -110,7 +110,8 @@ func tagImg(url string, vision util.Tagger) []util.Tag {
 	response := make([]util.Tag, len(result.Tags))
 	for i, visionTag := range result.Tags {
 		response[i] = util.Tag{
-			Tag: visionTag,
+			Name:       visionTag.Name,
+			Confidence: visionTag.Confidence,
 		}
 	}
 	return response

@@ -21,14 +21,15 @@ type Post struct {
 	IsNSFW       bool    `json:"over_18"`
 	IsSelf       bool    `json:"is_self"`
 	PostHint     string  `json:"post_hint"`
-	Tags         []Tag   `json:"-"`
+	Tags         []Tag   `json:"tags"`
 }
 
 // Tag represents a Microsoft Vision API.
 type Tag struct {
-	ID     uint `gorm:"primary_key"`
-	PostID string
-	vision.Tag
+	ID         uint `gorm:"primary_key"`
+	PostID     string
+	Name       string  `json:"name"`
+	Confidence float64 `json:"confidence"`
 }
 
 // Tagger is an API that tags an image.

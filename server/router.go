@@ -13,7 +13,7 @@ func newRouter() http.Handler {
 	for _, route := range serverRoutes {
 
 		router.
-			Methods(route.Method).
+			Methods(route.Method...).
 			Path(route.Pattern).
 			Name(route.Name).
 			Handler(route.HandlerFunc)
