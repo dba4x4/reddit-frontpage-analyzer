@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/graphql-go/graphql"
@@ -78,7 +77,7 @@ var post = graphql.NewObject(
 				Type: graphql.Int,
 			},
 			"post_hint": &graphql.Field{
-				Type: graphql.Int,
+				Type: graphql.String,
 			},
 			"tags": &graphql.Field{
 				Type: graphql.NewList(tag),
@@ -105,11 +104,10 @@ var queryType = graphql.NewObject(
 					posts := []util.Post{}
 					err := db.
 						Preload("Tags").
-						Where("date(to_timestamp(date_created)) = ?", date).
+						Where("date(to_timestamp(date_created)) = ? AND post_hint = 'image'", date).
 						Find(&posts).
 						Error
 					if err != nil {
-						log.Println(err)
 						return nil, errors.New("Internal server error")
 					}
 					return posts, nil
@@ -142,7 +140,6 @@ func queryPost(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("400 Bad Request"))
 		return
 	}
-	log.Println(graphqlQuery)
 	query(w, graphqlQuery.Query)
 }
 
