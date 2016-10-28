@@ -1,5 +1,5 @@
 postgresql:
-    database: rfag
+    database: posts
     username: postgres
     password: 
     hostname: localhost

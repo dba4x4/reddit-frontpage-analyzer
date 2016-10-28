@@ -1,15 +1,15 @@
 # Reddit Frontpage Analyzer
-[![Build Status](https://ci.swordbeta.com/api/badges/swordbeta/reddit-frontpage-analyzer-go/status.svg)](https://ci.swordbeta.com/swordbeta/reddit-frontpage-analyzer-go)
-[![Go Report Card](https://goreportcard.com/badge/github.com/swordbeta/reddit-frontpage-analyzer-go)](https://goreportcard.com/report/github.com/swordbeta/reddit-frontpage-analyzer-go)
-[![codecov](https://codecov.io/gh/swordbeta/reddit-frontpage-analyzer-go/branch/master/graph/badge.svg)](https://codecov.io/gh/swordbeta/reddit-frontpage-analyzer-go)
+[![Build Status](https://ci.swordbeta.com/api/badges/swordbeta/reddit-frontpage-analyzer/status.svg)](https://ci.swordbeta.com/swordbeta/reddit-frontpage-analyzer)
+[![Go Report Card](https://goreportcard.com/badge/github.com/swordbeta/reddit-frontpage-analyzer)](https://goreportcard.com/report/github.com/swordbeta/reddit-frontpage-analyzer)
+[![codecov](https://codecov.io/gh/swordbeta/reddit-frontpage-analyzer/branch/master/graph/badge.svg)](https://codecov.io/gh/swordbeta/reddit-frontpage-analyzer)
 
 This go application does the following:
 
 - Fetches the top 25 posts from [/r/all][1]
-- Stores all data in PostgreSQL
 - Analyzes (tags) images with the [Microsoft Computer Vision API][3]
+- Stores all data in PostgreSQL
 
-For the NodeJS serverless version see [here][2].
+For the NodeJS AWS Lambda version using AWS DynamoDB see [here][2]. (Does not work as good as I hoped.)
 
 ### Installation / Running
 
@@ -35,14 +35,9 @@ Run docker container
 
 ### Roadmap
 
-- [X] Fetch reddit frontpage
-- [X] Save unique posts to PostgreSQL
-- [X] Tag images with [Microsoft Computer Vision API][3]
-- [X] Add instructions for running in README
-- [X] Gracefully exit current run when hitting rate limits
-- [X] Add tests
-- [X] Add Travis CI support
-- [X] Add code coverage and other badges
+- [ ] More GraphQL endpoints
+- [ ] GraphQL filters
+- [ ] Update README.md once client has been made.
 
 [1]: https://reddit.com/r/all
 [2]: https://github.com/swordbeta/reddit-frontpage-analyzer-nodejs
