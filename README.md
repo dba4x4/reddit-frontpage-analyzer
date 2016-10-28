@@ -1,4 +1,4 @@
-# Reddit Frontpage Analyzer (go)
+# Reddit Frontpage Analyzer
 [![Build Status](https://ci.swordbeta.com/api/badges/swordbeta/reddit-frontpage-analyzer-go/status.svg)](https://ci.swordbeta.com/swordbeta/reddit-frontpage-analyzer-go)
 [![Go Report Card](https://goreportcard.com/badge/github.com/swordbeta/reddit-frontpage-analyzer-go)](https://goreportcard.com/report/github.com/swordbeta/reddit-frontpage-analyzer-go)
 [![codecov](https://codecov.io/gh/swordbeta/reddit-frontpage-analyzer-go/branch/master/graph/badge.svg)](https://codecov.io/gh/swordbeta/reddit-frontpage-analyzer-go)
@@ -15,7 +15,7 @@ For the NodeJS serverless version see [here][2].
 
 Clone the repository
 ```
-λ git clone git@github.com:swordbeta/reddit-frontpage-analyzer-go.git && cd reddit-frontpage-analyzer-go
+λ git clone git@github.com:swordbeta/reddit-frontpage-analyzer.git && cd reddit-frontpage-analyzer
 ```
 
 Copy the config file and edit
@@ -25,12 +25,12 @@ cp config.yaml.default config.yaml && vim config.yaml
 
 Build docker image
 ```
-λ docker build -t reddit-frontpage-analyzer-go .
+λ docker build -t reddit-frontpage-analyzer .
 ```
 
 Run docker container
 ```
-λ docker run --rm --name reddit-frontpage-analyzer-go reddit-frontpage-analyzer-go
+λ docker run --rm --name reddit-frontpage-analyzer reddit-frontpage-analyzer
 ```
 
 ### Roadmap
