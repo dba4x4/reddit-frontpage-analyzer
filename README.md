@@ -33,12 +33,6 @@ Run docker container
 λ docker run --rm --name reddit-frontpage-analyzer reddit-frontpage-analyzer
 ```
 
-### Roadmap
-
-- [ ] More GraphQL endpoints
-- [ ] GraphQL filters
-- [ ] Update README.md once client has been made.
-
 [1]: https://reddit.com/r/all
 [2]: https://github.com/swordbeta/reddit-frontpage-analyzer-nodejs
 [3]: https://www.microsoft.com/cognitive-services/en-us/computer-vision-api
