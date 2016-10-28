@@ -2,7 +2,9 @@ package server
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/graphql-go/graphql"
@@ -89,15 +91,26 @@ var queryType = graphql.NewObject(
 	graphql.ObjectConfig{
 		Name: "Query",
 		Fields: graphql.Fields{
-			"post": &graphql.Field{
+			"posts": &graphql.Field{
 				Type:        graphql.NewList(post),
 				Description: "List of posts",
+				Args: graphql.FieldConfigArgument{
+					"date": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					date := p.Args["date"]
 					db := util.InitDatabase()
 					posts := []util.Post{}
-					dbf := db.Preload("Tags").Find(&posts)
-					if dbf.Error != nil {
-						return nil, nil
+					err := db.
+						Preload("Tags").
+						Where("date(to_timestamp(date_created)) = ?", date).
+						Find(&posts).
+						Error
+					if err != nil {
+						log.Println(err)
+						return nil, errors.New("Internal server error")
 					}
 					return posts, nil
 				},
@@ -112,11 +125,34 @@ var schema, _ = graphql.NewSchema(
 	},
 )
 
-func query(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Query().Get("query") == "" {
+type graphqlQuery struct {
+	Query string `json:"query"`
+}
+
+func queryGet(w http.ResponseWriter, r *http.Request) {
+	query(w, r.URL.Query().Get("query"))
+}
+
+func queryPost(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var graphqlQuery graphqlQuery
+	err := decoder.Decode(&graphqlQuery)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("400 Bad Request"))
 		return
 	}
-	result := executeQuery(r.URL.Query()["query"][0], schema)
+	log.Println(graphqlQuery)
+	query(w, graphqlQuery.Query)
+}
+
+func query(w http.ResponseWriter, query string) {
+	if query == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("400 Bad Request"))
+		return
+	}
+	result := executeQuery(query, schema)
 	json.NewEncoder(w).Encode(result)
 }
 

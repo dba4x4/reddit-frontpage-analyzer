@@ -19,5 +19,10 @@ func newRouter() http.Handler {
 			Handler(route.HandlerFunc)
 	}
 	loggedRouter := handlers.LoggingHandler(os.Stdout, router)
-	return loggedRouter
+	return handlers.CORS(
+		handlers.AllowedHeaders([]string{
+			"content-type",
+		}),
+		handlers.AllowCredentials(),
+	)(loggedRouter)
 }

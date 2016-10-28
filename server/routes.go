@@ -14,8 +14,14 @@ type routes []route
 var serverRoutes = routes{
 	route{
 		"GraphQL endpoint",
-		[]string{"GET", "POST"},
+		[]string{"POST"},
 		"/graphql",
-		query,
+		queryPost,
+	},
+	route{
+		"GraphQL endpoint",
+		[]string{"GET"},
+		"/graphql",
+		queryGet,
 	},
 }
