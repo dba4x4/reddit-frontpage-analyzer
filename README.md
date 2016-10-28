@@ -10,6 +10,7 @@ This go application does the following:
 - Stores all data in PostgreSQL
 
 For the React client, which uses this application, see [here][4].
+
 For the NodeJS AWS Lambda version using AWS DynamoDB see [here][2]. (Does not work as good as I hoped.)
 
 ### Installation / Running
