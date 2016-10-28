@@ -1,5 +1,5 @@
 # Reddit Frontpage Analyzer
-[![Build Status](https://ci.swordbeta.com/api/badges/swordbeta/reddit-frontpage-analyzer/status.svg)](https://ci.swordbeta.com/swordbeta/reddit-frontpage-analyzer)
+[![Travis](https://travis-ci.org/swordbeta/reddit-frontpage-analyzer.svg?branch=master)](https://travis-ci.org/swordbeta/reddit-frontpage-analyzer)
 [![Go Report Card](https://goreportcard.com/badge/github.com/swordbeta/reddit-frontpage-analyzer)](https://goreportcard.com/report/github.com/swordbeta/reddit-frontpage-analyzer)
 [![codecov](https://codecov.io/gh/swordbeta/reddit-frontpage-analyzer/branch/master/graph/badge.svg)](https://codecov.io/gh/swordbeta/reddit-frontpage-analyzer)
 
