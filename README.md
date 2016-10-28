@@ -9,6 +9,7 @@ This go application does the following:
 - Analyzes (tags) images with the [Microsoft Computer Vision API][3]
 - Stores all data in PostgreSQL
 
+For the React client, which uses this application, see [here][4].
 For the NodeJS AWS Lambda version using AWS DynamoDB see [here][2]. (Does not work as good as I hoped.)
 
 ### Installation / Running
@@ -36,3 +37,4 @@ Run docker container
 [1]: https://reddit.com/r/all
 [2]: https://github.com/swordbeta/reddit-frontpage-analyzer-nodejs
 [3]: https://www.microsoft.com/cognitive-services/en-us/computer-vision-api
+[4]: https://github.com/swordbeta/reddit-frontpage-analyzer-client
