@@ -9,7 +9,7 @@ go:
 before_script:
     - go get -t -v ./...
     - psql -c 'create database posts;' -U postgres
-    - cp config.yaml.travis config.yaml
+    - cp config.yaml.travis $HOME/.config/reddit-frontpage-analyzer/config.yaml
 
 script:
     - ./go.test.sh
