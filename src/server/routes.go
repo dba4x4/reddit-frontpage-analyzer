@@ -1,6 +1,10 @@
 package server
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/swordbeta/reddit-frontpage-analyzer-go/src/server/resource"
+)
 
 type route struct {
 	Name        string
@@ -13,15 +17,9 @@ type routes []route
 
 var serverRoutes = routes{
 	route{
-		"GraphQL endpoint",
-		[]string{"POST"},
-		"/graphql",
-		queryPost,
-	},
-	route{
-		"GraphQL endpoint",
+		"Get posts with tags filtered by date",
 		[]string{"GET"},
-		"/graphql",
-		queryGet,
+		"/api/v1/posts",
+		resource.GetPosts,
 	},
 }
