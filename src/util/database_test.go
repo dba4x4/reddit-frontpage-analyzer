@@ -17,6 +17,7 @@ func TestMain(m *testing.M) {
 func tearDown() {
 	db := InitDatabase()
 	db.Delete(Post{})
+	db.Delete(Tag{})
 }
 
 func Test_Exists(t *testing.T) {
@@ -119,7 +120,7 @@ func Test_GetPostsByDate(t *testing.T) {
 	if result[0].PostHint != "image" {
 		t.Errorf("Post is not hinted to be an image.")
 	}
-	if len(result[0].Tags) == 2 {
+	if len(result[0].Tags) != 2 {
 		t.Errorf("Post should have two tags.")
 	}
 }
