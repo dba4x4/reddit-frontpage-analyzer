@@ -46,12 +46,12 @@ func SavePost(post *Post, db *gorm.DB) {
 }
 
 // GetPostsByDate returns posts filtered by a date.
-func GetPostsByDate(date string, db *gorm.DB) (*[]Post, error) {
+func GetPostsByDate(date string, db *gorm.DB) ([]Post, error) {
 	posts := []Post{}
 	err := db.
 		Preload("Tags").
 		Where("date(to_timestamp(date_created)) = ? AND post_hint = 'image'", date).
 		Find(&posts).
 		Error
-	return &posts, err
+	return posts, err
 }

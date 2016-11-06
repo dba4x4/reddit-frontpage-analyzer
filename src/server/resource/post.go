@@ -16,6 +16,7 @@ func GetPosts(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	db := util.InitDatabase()
+	defer db.Close()
 	posts, err := util.GetPostsByDate(r.URL.Query().Get("date"), db)
 	if err != nil {
 		log.Println(err)
