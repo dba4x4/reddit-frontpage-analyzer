@@ -9,6 +9,7 @@ go:
 before_script:
     - go get -t -v ./...
     - psql -c 'create database posts;' -U postgres
+    - mkdir -p $HOME/.config/reddit-frontpage-analyzer/
     - cp config.yaml.travis $HOME/.config/reddit-frontpage-analyzer/config.yaml
 
 script:
