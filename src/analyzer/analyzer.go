@@ -12,13 +12,14 @@ import (
 	"github.com/jasonlvhit/gocron"
 	"github.com/jinzhu/gorm"
 	"github.com/spf13/viper"
-	"github.com/swordbeta/reddit-frontpage-analyzer-go/src/util"
+	"github.com/swordbeta/reddit-frontpage-analyzer-go/src/domain"
+	"github.com/swordbeta/reddit-frontpage-analyzer-go/src/util/database"
 )
 
 type response struct {
 	Data struct {
 		Children []struct {
-			Data *util.Post
+			Data *domain.Post
 		}
 	}
 }
@@ -33,7 +34,7 @@ func Start() {
 
 func run() {
 	log.Println("Starting to process all posts on r/all...")
-	db := util.InitDatabase()
+	db := database.InitDatabase()
 	defer db.Close()
 	posts, err := getPosts("all")
 	if err != nil {
@@ -56,9 +57,9 @@ func run() {
 	log.Println("Finished processing all posts, waiting 30 minutes...")
 }
 
-func processPost(post *util.Post, db *gorm.DB, vision util.Tagger, wg *sync.WaitGroup) bool {
+func processPost(post *domain.Post, db *gorm.DB, vision tagger, wg *sync.WaitGroup) bool {
 	defer wg.Done()
-	if util.Exists(post.ID, db) {
+	if database.PostExists(post.ID, db) {
 		log.Println("Skipping #", post.ID, "...")
 		return false
 	}
@@ -66,14 +67,14 @@ func processPost(post *util.Post, db *gorm.DB, vision util.Tagger, wg *sync.Wait
 	if post.PostHint == "image" {
 		post.Tags = tagImg(post.URL, vision)
 	}
-	util.SavePost(post, db)
+	database.SavePost(post, db)
 	log.Println("Finished processing #", post.ID, "...")
 	return true
 }
 
 var redditURL = "https://www.reddit.com/r/%s.json"
 
-func getPosts(subreddit string) ([]*util.Post, error) {
+func getPosts(subreddit string) ([]*domain.Post, error) {
 	client := &http.Client{}
 	url := fmt.Sprintf(redditURL, subreddit)
 	req, err := http.NewRequest("GET", url, nil)
@@ -94,22 +95,22 @@ func getPosts(subreddit string) ([]*util.Post, error) {
 	if err != nil {
 		return nil, err
 	}
-	posts := make([]*util.Post, len(r.Data.Children))
+	posts := make([]*domain.Post, len(r.Data.Children))
 	for i, child := range r.Data.Children {
 		posts[i] = child.Data
 	}
 	return posts, nil
 }
 
-func tagImg(url string, vision util.Tagger) []util.Tag {
+func tagImg(url string, vision tagger) []domain.Tag {
 	result, err := vision.Tag(url)
 	if err != nil {
 		log.Println(fmt.Sprintf("While trying to tag %s got the following error: %s", url, err))
-		return make([]util.Tag, 0)
+		return make([]domain.Tag, 0)
 	}
-	response := make([]util.Tag, len(result.Tags))
+	response := make([]domain.Tag, len(result.Tags))
 	for i, visionTag := range result.Tags {
-		response[i] = util.Tag{
+		response[i] = domain.Tag{
 			Name:       visionTag.Name,
 			Confidence: visionTag.Confidence,
 		}

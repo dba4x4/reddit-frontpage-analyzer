@@ -1,6 +1,4 @@
-package util
-
-import vision "github.com/ahmdrz/microsoft-vision-golang"
+package domain
 
 // Post represents a post on reddit
 type Post struct {
@@ -30,9 +28,4 @@ type Tag struct {
 	PostID     string
 	Name       string  `json:"name"`
 	Confidence float64 `json:"confidence"`
-}
-
-// Tagger is an API that tags an image.
-type Tagger interface {
-	Tag(url string) (vision.VisionResult, error)
 }

@@ -7,20 +7,22 @@ import (
 	"os"
 	"testing"
 
+	"github.com/swordbeta/reddit-frontpage-analyzer-go/src/domain"
 	"github.com/swordbeta/reddit-frontpage-analyzer-go/src/util"
+	"github.com/swordbeta/reddit-frontpage-analyzer-go/src/util/database"
 )
 
 func TestMain(m *testing.M) {
 	ret := m.Run()
-	util.TearDown()
+	database.TearDown()
 	os.Exit(ret)
 }
 
 func Test_GetPosts(t *testing.T) {
 	util.InitConfig()
-	db := util.InitDatabase()
+	db := database.InitDatabase()
 	defer db.Close()
-	util.LoadTestPosts(db)
+	database.LoadTestPosts(db)
 	r, _ := http.NewRequest("GET", "/api/v1/posts", nil)
 	w := httptest.NewRecorder()
 	GetPosts(w, r)
@@ -38,7 +40,7 @@ func Test_GetPosts(t *testing.T) {
 		t.Errorf("Expected application/json, got %v.", contentType)
 	}
 	decoder := json.NewDecoder(w.Body)
-	posts := []util.Post{}
+	posts := []domain.Post{}
 	err := decoder.Decode(&posts)
 	if err != nil {
 		t.Error(err)

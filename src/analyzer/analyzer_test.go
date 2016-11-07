@@ -11,7 +11,9 @@ import (
 	"testing"
 
 	vision "github.com/ahmdrz/microsoft-vision-golang"
+	"github.com/swordbeta/reddit-frontpage-analyzer-go/src/domain"
 	"github.com/swordbeta/reddit-frontpage-analyzer-go/src/util"
+	"github.com/swordbeta/reddit-frontpage-analyzer-go/src/util/database"
 )
 
 const firstImage = "http://test.com/firstimage.jpg"
@@ -50,19 +52,19 @@ func (mV mockedVision) Tag(url string) (vision.VisionResult, error) {
 
 func TestMain(m *testing.M) {
 	ret := m.Run()
-	util.TearDown()
+	database.TearDown()
 	os.Exit(ret)
 }
 
 func Test_tagImg(t *testing.T) {
 	type args struct {
 		url    string
-		vision util.Tagger
+		vision tagger
 	}
 	tests := []struct {
 		name string
 		args args
-		want []util.Tag
+		want []domain.Tag
 	}{
 		{
 			"Person image",
@@ -70,8 +72,8 @@ func Test_tagImg(t *testing.T) {
 				firstImage,
 				mockedVision{},
 			},
-			[]util.Tag{
-				util.Tag{
+			[]domain.Tag{
+				domain.Tag{
 					Name:       "Person",
 					Confidence: 0.95,
 				},
@@ -83,12 +85,12 @@ func Test_tagImg(t *testing.T) {
 				secondImage,
 				mockedVision{},
 			},
-			[]util.Tag{
-				util.Tag{
+			[]domain.Tag{
+				domain.Tag{
 					Name:       "Dog",
 					Confidence: 0.95,
 				},
-				util.Tag{
+				domain.Tag{
 					Name:       "Grass",
 					Confidence: 0.75,
 				},
@@ -100,7 +102,7 @@ func Test_tagImg(t *testing.T) {
 				"http://test.com/unknown.jpg",
 				mockedVision{},
 			},
-			[]util.Tag{},
+			[]domain.Tag{},
 		},
 	}
 	for _, tt := range tests {
@@ -145,11 +147,11 @@ func Test_getPostsTooManyRequests(t *testing.T) {
 }
 
 func Test_processPost(t *testing.T) {
-	post := &util.Post{
+	post := &domain.Post{
 		ID: "processPost",
 	}
 	util.InitConfig()
-	db := util.InitDatabase()
+	db := database.InitDatabase()
 	defer db.Close()
 	var wg sync.WaitGroup
 	wg.Add(1)
@@ -159,13 +161,13 @@ func Test_processPost(t *testing.T) {
 }
 
 func Test_processPostAlreadyProcessed(t *testing.T) {
-	post := &util.Post{
+	post := &domain.Post{
 		ID: "existingPost",
 	}
 	util.InitConfig()
-	db := util.InitDatabase()
+	db := database.InitDatabase()
 	defer db.Close()
-	util.SavePost(post, db)
+	database.SavePost(post, db)
 	var wg sync.WaitGroup
 	wg.Add(1)
 	if processPost(post, db, &mockedVision{}, &wg) != false {

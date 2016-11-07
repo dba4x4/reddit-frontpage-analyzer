@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/swordbeta/reddit-frontpage-analyzer-go/src/util"
+	"github.com/swordbeta/reddit-frontpage-analyzer-go/src/util/database"
 )
 
 // GetPosts returns posts filtered by date.
@@ -15,9 +15,9 @@ func GetPosts(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("400 Bad Request - Missing date querystring."))
 		return
 	}
-	db := util.InitDatabase()
+	db := database.InitDatabase()
 	defer db.Close()
-	posts, err := util.GetPostsByDate(r.URL.Query().Get("date"), db)
+	posts, err := database.GetPostsByDate(r.URL.Query().Get("date"), db)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)

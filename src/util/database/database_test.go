@@ -1,10 +1,12 @@
-package util
+package database
 
 import (
 	"os"
 	"testing"
 
 	"github.com/jinzhu/gorm"
+	"github.com/swordbeta/reddit-frontpage-analyzer-go/src/domain"
+	"github.com/swordbeta/reddit-frontpage-analyzer-go/src/util"
 )
 
 func TestMain(m *testing.M) {
@@ -13,11 +15,11 @@ func TestMain(m *testing.M) {
 	os.Exit(ret)
 }
 
-func Test_Exists(t *testing.T) {
-	InitConfig()
+func Test_PostExists(t *testing.T) {
+	util.InitConfig()
 	db := InitDatabase()
 	defer db.Close()
-	SavePost(&Post{
+	SavePost(&domain.Post{
 		ID: "myExistingPost",
 	}, db)
 	type args struct {
@@ -47,24 +49,24 @@ func Test_Exists(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		if got := Exists(tt.args.id, tt.args.db); got != tt.want {
+		if got := PostExists(tt.args.id, tt.args.db); got != tt.want {
 			t.Errorf("%q. Exists() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
 }
 
 func Test_SavePost(t *testing.T) {
-	InitConfig()
+	util.InitConfig()
 	db := InitDatabase()
 	defer db.Close()
-	post := &Post{
+	post := &domain.Post{
 		ID: "myPost",
 	}
-	if Exists(post.ID, db) {
+	if PostExists(post.ID, db) {
 		t.Errorf("Test_SavePost ID %v already exists.", post.ID)
 	}
 	SavePost(post, db)
-	if Exists(post.ID, db) == false {
+	if PostExists(post.ID, db) == false {
 		t.Errorf("Test_SavePost ID %v was not saved", post.ID)
 	}
 }
