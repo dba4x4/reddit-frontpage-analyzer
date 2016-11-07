@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"reflect"
 	"sync"
 	"testing"
@@ -45,6 +46,12 @@ func (mV mockedVision) Tag(url string) (vision.VisionResult, error) {
 		}, nil
 	}
 	return vision.VisionResult{}, errors.New("Could not fetch image!")
+}
+
+func TestMain(m *testing.M) {
+	ret := m.Run()
+	util.TearDown()
+	os.Exit(ret)
 }
 
 func Test_tagImg(t *testing.T) {

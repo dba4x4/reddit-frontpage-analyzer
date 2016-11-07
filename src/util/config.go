@@ -10,8 +10,6 @@ import (
 // InitConfig initializes the configuration with viper.
 func InitConfig() {
 	viper.AddConfigPath(".")
-	viper.AddConfigPath("../")
-	viper.AddConfigPath("../../")
 	viper.AddConfigPath("$HOME/.config/reddit-frontpage-analyzer/")
 	viper.SetConfigName("config")
 	err := viper.ReadInConfig()
