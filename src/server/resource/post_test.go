@@ -22,7 +22,36 @@ func Test_GetPosts(t *testing.T) {
 	util.InitConfig()
 	db := database.InitDatabase()
 	defer db.Close()
-	database.LoadTestPosts(db)
+	database.SavePost(&domain.Post{
+		ID:          "firstPost",
+		DateCreated: 1451606400, // 2016-01-01
+		PostHint:    "image",
+		Tags: []domain.Tag{
+			domain.Tag{
+				Name:       "Quite sure",
+				Confidence: 0.95,
+			},
+			domain.Tag{
+				Name:       "Not quite sure",
+				Confidence: 0.45,
+			},
+		},
+	}, db)
+	database.SavePost(&domain.Post{
+		ID:          "secondPost",
+		DateCreated: 1451692800, // 2016-01-02
+		PostHint:    "image",
+		Tags: []domain.Tag{
+			domain.Tag{
+				Name:       "Quite sure",
+				Confidence: 0.95,
+			},
+			domain.Tag{
+				Name:       "Not quite sure",
+				Confidence: 0.45,
+			},
+		},
+	}, db)
 	r, _ := http.NewRequest("GET", "/api/v1/posts", nil)
 	w := httptest.NewRecorder()
 	GetPosts(w, r)

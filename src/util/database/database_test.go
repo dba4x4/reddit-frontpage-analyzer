@@ -70,3 +70,59 @@ func Test_SavePost(t *testing.T) {
 		t.Errorf("Test_SavePost ID %v was not saved", post.ID)
 	}
 }
+
+func Test_GetPostsByDate(t *testing.T) {
+	util.InitConfig()
+	db := InitDatabase()
+	defer db.Close()
+	SavePost(&domain.Post{
+		ID:          "firstPost1",
+		DateCreated: 1451606400, // 2016-01-01
+		PostHint:    "image",
+		Tags: []domain.Tag{
+			domain.Tag{
+				Name:       "Quite sure",
+				Confidence: 0.95,
+			},
+			domain.Tag{
+				Name:       "Not quite sure",
+				Confidence: 0.45,
+			},
+		},
+	}, db)
+	SavePost(&domain.Post{
+		ID:          "secondPost1",
+		DateCreated: 1451692800, // 2016-01-02
+		PostHint:    "image",
+		Tags: []domain.Tag{
+			domain.Tag{
+				Name:       "Quite sure",
+				Confidence: 0.95,
+			},
+			domain.Tag{
+				Name:       "Not quite sure",
+				Confidence: 0.45,
+			},
+		},
+	}, db)
+	result, err := GetPostsByDate("2016-01-01", db)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	if len(result) != 1 {
+		t.Errorf("Posts from 2016-01-01 had length %v instead of expected 1.", len(result))
+	}
+	if result[0].PostHint != "image" {
+		t.Errorf("Expected PostHint to be iamge, is %v.", result[0].PostHint)
+	}
+	if len(result[0].Tags) != 2 {
+		t.Errorf("Expected 2 tags, post has %v.", len(result[0].Tags))
+	}
+	result, err = GetPostsByDate("2016-01-03", db)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	if len(result) > 0 {
+		t.Errorf("Posts from 2016-01-03 had length %v instead of expected 0.", len(result))
+	}
+}
