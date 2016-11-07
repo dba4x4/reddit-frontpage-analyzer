@@ -1,3 +1,4 @@
-codecov:
+coverage:
+  round: up
   ignore:
     - "src/util/database/testUtil.go"
